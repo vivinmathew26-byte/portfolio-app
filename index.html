@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: monospace;
+        }
+
+        .chat-container {
+            width: 450px;
+            height: 600px;
+            background-color: #16213e;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #0f3460;
+            color: aqua;
+            text-align: center;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        #chatbox {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .userText {
+            color: white;
+            font-family: monospace;
+            font-size: 15px;
+            text-align: right;
+            line-height: 30px;
+        }
+
+        .userText span {
+            background-color: #009688;
+            padding: 8px 14px;
+            border-radius: 15px 15px 0px 15px;
+            display: inline-block;
+        }
+
+        .botText {
+            color: white;
+            font-family: monospace;
+            font-size: 15px;
+            text-align: left;
+            line-height: 30px;
+        }
+
+        .botText span {
+            background-color: #EF5350;
+            padding: 8px 14px;
+            border-radius: 15px 15px 15px 0px;
+            display: inline-block;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background-color: #0f3460;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #textInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid aqua;
+            color: white;
+            font-family: monospace;
+            font-size: 15px;
+            padding: 6px 4px;
+            outline: none;
+        }
+
+        #textInput::placeholder {
+            color: #aaa;
+        }
+
+        #sendButton {
+            background-color: aqua;
+            color: #1a1a2e;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #sendButton:hover {
+            background-color: #00cfcf;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">🤖 ChatBot</div>
+
+        <div id="chatbox">
+            <div class="botText"><span>Hello! I am a chatbot. How can I help you?</span></div>
+        </div>
+
+        <div class="chat-input-area">
+            <input id="textInput" type="text" placeholder="Type a message..." />
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Send message on Enter key press
+        document.getElementById("textInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            var userText = document.getElementById("textInput").value.trim();
+
+            if (userText === "") return; // Don't send empty messages
+
+            // Show user message in chatbox
+            var userHTML = '<div class="userText"><span>' + escapeHTML(userText) + '</span></div>';
+            document.getElementById("chatbox").innerHTML += userHTML;
+
+            // Clear input
+            document.getElementById("textInput").value = "";
+
+            // Scroll to bottom
+            scrollToBottom();
+
+            // Fetch bot response from Flask backend
+            fetch("/get?msg=" + encodeURIComponent(userText))
+                .then(response => response.text())
+                .then(data => {
+                    var botHTML = '<div class="botText"><span>' + escapeHTML(data) + '</span></div>';
+                    document.getElementById("chatbox").innerHTML += botHTML;
+                    scrollToBottom();
+                })
+                .catch(error => {
+                    var botHTML = '<div class="botText"><span>Sorry, something went wrong!</span></div>';
+                    document.getElementById("chatbox").innerHTML += botHTML;
+                    scrollToBottom();
+                });
+        }
+
+        function scrollToBottom() {
+            var chatbox = document.getElementById("chatbox");
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Prevent XSS - escape user input before displaying
+        function escapeHTML(text) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
