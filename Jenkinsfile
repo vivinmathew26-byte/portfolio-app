@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         IMAGE_NAME = "vivinmathew/portfolio"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         CONTAINER_NAME = "portfolio"
@@ -28,16 +27,6 @@ pipeline {
                     sleep 3
                     curl -sf http://localhost:8080/ || (docker logs portfolio-test && exit 1)
                     docker stop portfolio-test && docker rm portfolio-test
-                '''
-            }
-        }
-
-        stage('Push') {
-            steps {
-                sh '''
-                    echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${IMAGE_NAME}:latest
                 '''
             }
         }
