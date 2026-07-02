@@ -1,190 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBot</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vivin Mathew — Junior DevOps Engineer</title>
+<meta name="description" content="Vivin Mathew, Junior DevOps Engineer. AWS, Docker, Jenkins, Kubernetes, Terraform, Prometheus & Grafana.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14;
+    --bg-raise:#0d121a;
+    --panel:#10151f;
+    --panel-border:#1e2734;
+    --text:#c9d3de;
+    --text-dim:#6b7688;
+    --text-bright:#eef2f6;
+    --green:#7ee787;
+    --amber:#f0a154;
+    --red:#f0716b;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Inter',system-ui,sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important}}
 
-        body {
-            background-color: #1a1a2e;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: monospace;
-        }
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(126,231,135,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(240,161,84,0.05), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+  a{color:inherit}
+  ::selection{background:rgba(126,231,135,0.25);color:var(--text-bright)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
 
-        .chat-container {
-            width: 450px;
-            height: 600px;
-            background-color: #16213e;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
+  .status-bar{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:var(--mono);font-size:12px;color:var(--text-dim);
+    padding:8px 16px;background:var(--bg-raise);border-bottom:1px solid var(--panel-border);
+    flex-wrap:wrap;text-align:center;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;
+    box-shadow:0 0 0 0 rgba(126,231,135,0.6);animation:pulse 2.2s infinite;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(126,231,135,0.55)}
+    70%{box-shadow:0 0 0 7px rgba(126,231,135,0)}
+    100%{box-shadow:0 0 0 0 rgba(126,231,135,0)}
+  }
+  .status-bar .sep{color:var(--panel-border)}
+  .status-bar b{color:var(--green);font-weight:600}
 
-        .chat-header {
-            background-color: #0f3460;
-            color: aqua;
-            text-align: center;
-            padding: 15px;
-            font-size: 20px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 8%;background:rgba(10,14,20,0.85);backdrop-filter:blur(10px);
+    position:sticky;top:0;z-index:50;border-bottom:1px solid var(--panel-border);
+  }
+  .logo{font-family:var(--mono);font-weight:600;color:var(--text-bright);font-size:15px;display:flex;align-items:center;gap:4px}
+  .logo .prompt{color:var(--green)}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav a{
+    font-family:var(--mono);font-size:13px;text-decoration:none;color:var(--text-dim);
+    padding:8px 12px;border-radius:6px;transition:color .15s, background .15s;
+  }
+  nav a:hover,nav a:focus-visible{color:var(--green);background:rgba(126,231,135,0.08)}
 
-        #chatbox {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+  section{padding:90px 8%;max-width:1200px;margin:0 auto}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--green);
+    display:flex;align-items:center;gap:8px;margin-bottom:14px;text-transform:none;
+  }
+  .eyebrow::before{content:'#';color:var(--text-dim)}
+  h2.section-title{
+    font-family:var(--sans);font-weight:800;font-size:clamp(26px,3.4vw,36px);
+    color:var(--text-bright);margin:0 0 34px;letter-spacing:-0.01em;
+  }
 
-        .userText {
-            color: white;
-            font-family: monospace;
-            font-size: 15px;
-            text-align: right;
-            line-height: 30px;
-        }
+  /* HERO */
+  .hero{padding:70px 8% 40px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  @media (max-width:920px){.hero{grid-template-columns:1fr;padding-top:50px}}
+  .hero-kicker{font-family:var(--mono);color:var(--text-dim);font-size:14px;margin:0 0 10px}
+  .hero-kicker .prompt{color:var(--green)}
+  .hero h1{
+    font-family:var(--sans);font-weight:800;font-size:clamp(38px,5.2vw,58px);
+    line-height:1.05;margin:0 0 14px;color:var(--text-bright);letter-spacing:-0.02em;
+  }
+  .hero h1 span{color:var(--green)}
+  .role-line{font-family:var(--mono);font-size:18px;color:var(--amber);margin:0 0 22px;min-height:26px}
+  .role-line::after{content:'';display:inline-block;width:9px;height:18px;background:var(--amber);margin-left:4px;vertical-align:-3px;animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .hero p.lede{color:var(--text);font-size:16px;max-width:52ch;margin:0 0 30px}
+  .stack-line{font-family:var(--mono);font-size:13px;color:var(--text-dim);margin:0 0 30px;line-height:1.9}
+  .stack-line b{color:var(--text)}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;
+    text-decoration:none;font-family:var(--mono);font-size:13.5px;font-weight:600;
+    transition:transform .15s, box-shadow .15s, background .15s;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--green);color:#06210c}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px -8px rgba(126,231,135,0.45)}
+  .btn-ghost{background:transparent;color:var(--text);border-color:var(--panel-border)}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px)}
 
-        .userText span {
-            background-color: #009688;
-            padding: 8px 14px;
-            border-radius: 15px 15px 0px 15px;
-            display: inline-block;
-        }
+  /* terminal window */
+  .terminal{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:12px;
+    overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
+  }
+  .terminal-bar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-raise);border-bottom:1px solid var(--panel-border)}
+  .terminal-bar span{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .terminal-bar span:nth-child(1){background:#f0716b}
+  .terminal-bar span:nth-child(2){background:#f0a154}
+  .terminal-bar span:nth-child(3){background:#7ee787}
+  .terminal-bar .fname{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--text-dim)}
+  .terminal-body{padding:20px 22px;font-family:var(--mono);font-size:13.5px;color:var(--text)}
+  .terminal-body .l{margin:0 0 9px}
+  .terminal-body .p{color:var(--green)}
+  .terminal-body .c{color:var(--amber)}
+  .terminal-body .out{color:var(--text-dim)}
 
-        .botText {
-            color: white;
-            font-family: monospace;
-            font-size: 15px;
-            text-align: left;
-            line-height: 30px;
-        }
+  /* pipeline strip — signature element */
+  .pipeline{margin-top:18px;background:var(--panel);border:1px solid var(--panel-border);border-radius:12px;padding:18px 20px}
+  .pipeline-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .pipeline-head span{font-family:var(--mono);font-size:11.5px;color:var(--text-dim)}
+  .pipeline-head .status{color:var(--green)}
+  .stages{display:flex;align-items:center}
+  .stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+  .stage .node{
+    width:30px;height:30px;border-radius:50%;border:2px solid var(--panel-border);
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;
+    background:var(--bg-raise);color:var(--text-dim);transition:all .4s ease;z-index:2;
+  }
+  .stage.done .node{border-color:var(--green);color:var(--green);background:rgba(126,231,135,0.1)}
+  .stage.active .node{border-color:var(--amber);color:var(--amber);background:rgba(240,161,84,0.12);animation:pulse-amber 1.4s infinite}
+  @keyframes pulse-amber{0%{box-shadow:0 0 0 0 rgba(240,161,84,.5)}70%{box-shadow:0 0 0 7px rgba(240,161,84,0)}100%{box-shadow:0 0 0 0 rgba(240,161,84,0)}}
+  .stage .label{font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+  .stage.done .label{color:var(--text)}
+  .stage:not(:last-child)::after{
+    content:'';position:absolute;top:15px;left:calc(50% + 20px);width:calc(100% - 40px);height:2px;background:var(--panel-border);z-index:1;
+  }
+  .stage.done:not(:last-child)::after{background:var(--green)}
 
-        .botText span {
-            background-color: #EF5350;
-            padding: 8px 14px;
-            border-radius: 15px 15px 15px 0px;
-            display: inline-block;
-        }
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media (max-width:800px){.about-grid{grid-template-columns:1fr}}
+  .about-grid p{color:var(--text);font-size:15.5px;max-width:56ch}
+  .metric-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .metric{background:var(--panel);border:1px solid var(--panel-border);border-radius:10px;padding:18px}
+  .metric .n{font-family:var(--mono);font-size:24px;color:var(--green);font-weight:700}
+  .metric .l{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);margin-top:4px}
 
-        .chat-input-area {
-            display: flex;
-            padding: 12px;
-            background-color: #0f3460;
-            gap: 10px;
-            align-items: center;
-        }
+  /* SKILLS */
+  .skill-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .skill-card{background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);padding:22px}
+  .skill-card .key{font-family:var(--mono);font-size:12px;color:var(--text-dim);margin:0 0 14px}
+  .skill-card .key b{color:var(--amber)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    font-family:var(--mono);font-size:12.5px;color:var(--text);background:var(--bg-raise);
+    border:1px solid var(--panel-border);padding:6px 11px;border-radius:6px;display:flex;align-items:center;gap:6px;
+  }
+  .chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green)}
 
-        #textInput {
-            flex: 1;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid aqua;
-            color: white;
-            font-family: monospace;
-            font-size: 15px;
-            padding: 6px 4px;
-            outline: none;
-        }
+  /* PROJECTS */
+  .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .project-card{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);
+    padding:24px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s, transform .15s;
+  }
+  .project-card:hover{border-color:rgba(126,231,135,0.4);transform:translateY(-3px)}
+  .project-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .project-card h3{margin:0;font-size:18px;color:var(--text-bright)}
+  .badge{font-family:var(--mono);font-size:10.5px;padding:4px 9px;border-radius:999px;white-space:nowrap;border:1px solid}
+  .badge.live{color:var(--green);border-color:rgba(126,231,135,0.4);background:rgba(126,231,135,0.08)}
+  .project-card p{margin:0;font-size:14.5px;color:var(--text-dim)}
+  .project-card .chips{margin-top:2px}
+  .project-card .chip{font-size:11px;padding:4px 9px}
+  .project-links{margin-top:auto;display:flex;gap:14px;padding-top:6px}
+  .project-links a{font-family:var(--mono);font-size:12.5px;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:5px}
+  .project-links a:hover{text-decoration:underline}
 
-        #textInput::placeholder {
-            color: #aaa;
-        }
+  /* PROFILES */
+  .profiles-row{display:flex;gap:14px;flex-wrap:wrap}
+  .profile-link{
+    display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--panel-border);
+    border-radius:999px;padding:10px 18px 10px 14px;text-decoration:none;font-family:var(--mono);font-size:13px;color:var(--text);
+    transition:border-color .15s, color .15s;
+  }
+  .profile-link:hover{border-color:var(--green);color:var(--green)}
+  .profile-link .flag{color:var(--amber)}
 
-        #sendButton {
-            background-color: aqua;
-            color: #1a1a2e;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+  /* CONTACT */
+  .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+  @media (max-width:800px){.contact-wrap{grid-template-columns:1fr}}
+  .contact-copy p{color:var(--text-dim);font-size:14.5px;max-width:48ch}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:6px}
+  .field label .req{color:var(--amber)}
+  input,textarea{
+    width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--panel-border);
+    background:var(--bg-raise);color:var(--text-bright);font-family:var(--sans);font-size:14px;
+  }
+  input::placeholder,textarea::placeholder{color:var(--text-dim)}
+  input:focus,textarea:focus{border-color:var(--green);outline:none}
+  form button{
+    padding:12px 24px;background:var(--green);border:none;border-radius:8px;color:#06210c;
+    font-family:var(--mono);font-weight:700;font-size:13.5px;cursor:pointer;transition:transform .15s;
+  }
+  form button:hover{transform:translateY(-2px)}
+  #msg{font-family:var(--mono);font-size:13px;color:var(--green);min-height:18px;margin-top:10px}
 
-        #sendButton:hover {
-            background-color: #00cfcf;
-        }
-    </style>
+  footer{
+    text-align:center;padding:28px 20px;background:var(--bg-raise);border-top:1px solid var(--panel-border);
+    font-family:var(--mono);font-size:12px;color:var(--text-dim);
+  }
+  footer .dot{margin-right:2px}
+</style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">🤖 ChatBot</div>
 
-        <div id="chatbox">
-            <div class="botText"><span>Hello! I am a chatbot. How can I help you?</span></div>
-        </div>
+<div class="status-bar">
+  <span class="dot"></span> <b>All systems operational</b>
+  <span class="sep">·</span> Uptime <b>99.98%</b>
+  <span class="sep">·</span> Open to Junior DevOps roles
+</div>
 
-        <div class="chat-input-area">
-            <input id="textInput" type="text" placeholder="Type a message..." />
-            <button id="sendButton" onclick="sendMessage()">Send</button>
-        </div>
+<header>
+  <div class="logo"><span class="prompt">vivin@devops</span>:~$</div>
+  <nav>
+    <a href="#about">about</a>
+    <a href="#skills">skills</a>
+    <a href="#projects">projects</a>
+    <a href="#contact">contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div>
+    <p class="hero-kicker"><span class="prompt">$</span> whoami</p>
+    <h1>Vivin <span>Mathew</span></h1>
+    <p class="role-line" id="roleLine"></p>
+    <p class="lede">I build and automate the infrastructure behind reliable software — from CI/CD pipelines to containerized deployments and monitoring that catches problems before users do.</p>
+    <p class="stack-line"><b>Core stack —</b> AWS · Docker · Jenkins · Kubernetes · Terraform · Git · Prometheus · Grafana · Linux</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#projects">View projects →</a>
+      <a class="btn btn-ghost" href="Vivin_Mathew_R_Resume.pdf" download>Download résumé ↓</a>
+    </div>
+  </div>
+
+  <div>
+    <div class="terminal">
+      <div class="terminal-bar"><span></span><span></span><span></span><span class="fname">about.sh</span></div>
+      <div class="terminal-body">
+        <p class="l"><span class="p">$</span> cat role.txt</p>
+        <p class="l out">Junior DevOps Engineer — cloud infra & automation</p>
+        <p class="l"><span class="p">$</span> ./deploy.sh --env production</p>
+        <p class="l out">Build ✓&nbsp; Test ✓&nbsp; Deploy ✓&nbsp; Monitoring <span class="c">active</span></p>
+      </div>
     </div>
 
-    <script>
-        // Send message on Enter key press
-        document.getElementById("textInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
+    <div class="pipeline">
+      <div class="pipeline-head">
+        <span>pipeline: portfolio-deploy</span>
+        <span class="status">● passing</span>
+      </div>
+      <div class="stages" id="pipelineStages">
+        <div class="stage done"><div class="node">✓</div><div class="label">Build</div></div>
+        <div class="stage done"><div class="node">✓</div><div class="label">Test</div></div>
+        <div class="stage done"><div class="node">✓</div><div class="label">Deploy</div></div>
+        <div class="stage active"><div class="node">●</div><div class="label">Monitor</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        function sendMessage() {
-            var userText = document.getElementById("textInput").value.trim();
+<section id="about">
+  <p class="eyebrow">about</p>
+  <h2 class="section-title">A junior engineer, production habits</h2>
+  <div class="about-grid">
+    <p>I'm a Junior DevOps Engineer focused on cloud infrastructure, CI/CD automation, containerization and monitoring. I like taking a manual, error-prone deploy process and turning it into something that runs the same way every time — versioned, tested, and observable. I'm early in my career, but I build things the way I'd want to inherit them.</p>
+    <div class="metric-row">
+      <div class="metric"><div class="n">2+</div><div class="l">DEPLOYED PROJECTS</div></div>
+      <div class="metric"><div class="n">8</div><div class="l">TOOLS IN DAILY USE</div></div>
+      <div class="metric"><div class="n">100%</div><div class="l">CI/CD AUTOMATED</div></div>
+      <div class="metric"><div class="n">24/7</div><div class="l">MONITORING MINDSET</div></div>
+    </div>
+  </div>
+</section>
 
-            if (userText === "") return; // Don't send empty messages
+<section id="skills">
+  <p class="eyebrow">skills</p>
+  <h2 class="section-title">Toolchain</h2>
+  <div class="skill-groups">
+    <div class="skill-card">
+      <p class="key">// <b>cloud</b> & compute</p>
+      <div class="chips"><span class="chip">AWS</span><span class="chip">Linux</span></div>
+    </div>
+    <div class="skill-card">
+      <p class="key">// <b>ci/cd</b> & source control</p>
+      <div class="chips"><span class="chip">Jenkins</span><span class="chip">Git & GitHub</span></div>
+    </div>
+    <div class="skill-card">
+      <p class="key">// <b>containers</b> & orchestration</p>
+      <div class="chips"><span class="chip">Docker</span><span class="chip">Kubernetes</span></div>
+    </div>
+    <div class="skill-card">
+      <p class="key">// <b>infra as code</b> & observability</p>
+      <div class="chips"><span class="chip">Terraform</span><span class="chip">Prometheus</span><span class="chip">Grafana</span></div>
+    </div>
+  </div>
+</section>
 
-            // Show user message in chatbox
-            var userHTML = '<div class="userText"><span>' + escapeHTML(userText) + '</span></div>';
-            document.getElementById("chatbox").innerHTML += userHTML;
+<section id="projects">
+  <p class="eyebrow">projects</p>
+  <h2 class="section-title">Shipped & running</h2>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-top">
+        <h3>Smart Tracker</h3>
+        <span class="badge live">deployed</span>
+      </div>
+      <p>Dockerized application deployed on AWS with a Jenkins CI/CD pipeline handling build, test and release.</p>
+      <div class="chips"><span class="chip">Docker</span><span class="chip">AWS</span><span class="chip">Jenkins</span></div>
+      <div class="project-links"><a href="https://github.com/" target="_blank" rel="noopener">→ View on GitHub</a></div>
+    </div>
+    <div class="project-card">
+      <div class="project-top">
+        <h3>E-Commerce Website</h3>
+        <span class="badge live">deployed</span>
+      </div>
+      <p>Containerized e-commerce application orchestrated with Kubernetes on AWS, with a Jenkins pipeline automating build, test and rolling deploys, and Nginx handling reverse proxy and load balancing.</p>
+      <div class="chips"><span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">AWS</span><span class="chip">Jenkins</span><span class="chip">Nginx</span></div>
+      <div class="project-links"><a href="https://github.com/" target="_blank" rel="noopener">→ View on GitHub</a></div>
+    </div>
+  </div>
+</section>
 
-            // Clear input
-            document.getElementById("textInput").value = "";
+<section id="profiles">
+  <p class="eyebrow">profiles</p>
+  <h2 class="section-title">Find me elsewhere</h2>
+  <div class="profiles-row">
+    <a class="profile-link" href="https://github.com/vivinmathew26-byte" target="_blank" rel="noopener"><span class="flag">--github</span> vivinmathew26-byte</a>
+    <a class="profile-link" href="https://linkedin.com/in/vivinmathew26" target="_blank" rel="noopener"><span class="flag">--linkedin</span> vivinmathew26</a>
+  </div>
+</section>
 
-            // Scroll to bottom
-            scrollToBottom();
+<section id="contact">
+  <p class="eyebrow">contact</p>
+  <h2 class="section-title">Let's talk</h2>
+  <div class="contact-wrap">
+    <div class="contact-copy">
+      <p>Hiring for a Junior DevOps role, or just want to talk about pipelines and infrastructure? Send a message and I'll get back to you.</p>
+    </div>
+    <form onsubmit="sendMsg(event)">
+      <div class="field">
+        <label for="name">Name <span class="req">*</span></label>
+        <input id="name" placeholder="Your name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email <span class="req">*</span></label>
+        <input id="email" type="email" placeholder="you@company.com" required>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" placeholder="What are you building?"></textarea>
+      </div>
+      <button type="submit">Send message</button>
+      <p id="msg" role="status"></p>
+    </form>
+  </div>
+</section>
 
-            // Fetch bot response from Flask backend
-            fetch("/get?msg=" + encodeURIComponent(userText))
-                .then(response => response.text())
-                .then(data => {
-                    var botHTML = '<div class="botText"><span>' + escapeHTML(data) + '</span></div>';
-                    document.getElementById("chatbox").innerHTML += botHTML;
-                    scrollToBottom();
-                })
-                .catch(error => {
-                    var botHTML = '<div class="botText"><span>Sorry, something went wrong!</span></div>';
-                    document.getElementById("chatbox").innerHTML += botHTML;
-                    scrollToBottom();
-                });
-        }
+<footer>
+  <span class="dot" style="width:6px;height:6px;background:#7ee787;border-radius:50%;display:inline-block;margin-right:6px;"></span>
+  © 2026 Vivin Mathew — Junior DevOps Engineer. Built with HTML, CSS & JS.
+</footer>
 
-        function scrollToBottom() {
-            var chatbox = document.getElementById("chatbox");
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
+<script>
+  // typed role line
+  const roles = ["Junior DevOps Engineer", "CI/CD & Automation", "Cloud Infrastructure"];
+  const roleEl = document.getElementById('roleLine');
+  let ri = 0, ci = 0, deleting = false;
+  function typeLoop(){
+    const current = roles[ri];
+    if(!deleting){
+      ci++;
+      roleEl.textContent = current.slice(0, ci);
+      if(ci === current.length){ deleting = true; setTimeout(typeLoop, 1400); return; }
+    } else {
+      ci--;
+      roleEl.textContent = current.slice(0, ci);
+      if(ci === 0){ deleting = false; ri = (ri+1) % roles.length; }
+    }
+    setTimeout(typeLoop, deleting ? 35 : 65);
+  }
+  typeLoop();
 
-        // Prevent XSS - escape user input before displaying
-        function escapeHTML(text) {
-            var div = document.createElement('div');
-            div.appendChild(document.createTextNode(text));
-            return div.innerHTML;
-        }
-    </script>
+  // contact form (demo)
+  function sendMsg(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const original = btn.textContent;
+    btn.textContent = 'Sending…';
+    setTimeout(()=>{
+      document.getElementById('msg').innerText = '✓ Message received — this is a demo form, connect it to a backend or a service like Formspree to go live.';
+      btn.textContent = original;
+      e.target.reset();
+    }, 500);
+  }
+</script>
 </body>
 </html>
