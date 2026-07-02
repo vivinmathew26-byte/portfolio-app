@@ -23,9 +23,9 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                    docker run -d --name portfolio-test -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker run -d --name portfolio-test -p 8000:80 ${IMAGE_NAME}:${IMAGE_TAG}
                     sleep 3
-                    curl -sf http://localhost:8080/ || (docker logs portfolio-test && exit 1)
+                    curl -sf http://localhost:8000/ || (docker logs portfolio-test && exit 1)
                     docker stop portfolio-test && docker rm portfolio-test
                 '''
             }
